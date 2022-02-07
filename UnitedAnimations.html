@@ -1,0 +1,369 @@
+<?php
+function ValidateEmail($email)
+{
+   $pattern = '/^([0-9a-z]([-.\w]*[0-9a-z])*@(([0-9a-z])+([-\w]*[0-9a-z])*\.)+[a-z]{2,6})$/i';
+   return preg_match($pattern, $email);
+}
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['formid']) && $_POST['formid'] == 'contactform')
+{
+   $mailto = 'unitedvidsic@gmail.com';
+   $mailfrom = isset($_POST['email']) ? $_POST['email'] : $mailto;
+   $subject = 'Contact us';
+   $message = 'Values submitted from web site form:';
+   $success_url = '';
+   $error_url = '';
+   $eol = "\n";
+   $error = '';
+   $internalfields = array ("submit", "reset", "send", "filesize", "formid", "captcha", "recaptcha_challenge_field", "recaptcha_response_field", "g-recaptcha-response", "h-captcha-response");
+   $boundary = md5(uniqid(time()));
+   $header  = 'From: '.$mailfrom.$eol;
+   $header .= 'Reply-To: '.$mailfrom.$eol;
+   $header .= 'MIME-Version: 1.0'.$eol;
+   $header .= 'Content-Type: multipart/mixed; boundary="'.$boundary.'"'.$eol;
+   $header .= 'X-Mailer: PHP v'.phpversion().$eol;
+   try
+   {
+      if (!ValidateEmail($mailfrom))
+      {
+         $error .= "The specified email address (" . $mailfrom . ") is invalid!\n<br>";
+         throw new Exception($error);
+      }
+      $message .= $eol;
+      $message .= "IP Address : ";
+      $message .= $_SERVER['REMOTE_ADDR'];
+      $message .= $eol;
+      foreach ($_POST as $key => $value)
+      {
+         if (!in_array(strtolower($key), $internalfields))
+         {
+            if (is_array($value))
+            {
+               $message .= ucwords(str_replace("_", " ", $key)) . " : " . implode(",", $value) . $eol;
+            }
+            else
+            {
+               $message .= ucwords(str_replace("_", " ", $key)) . " : " . $value . $eol;
+            }
+         }
+      }
+      $body  = 'This is a multi-part message in MIME format.'.$eol.$eol;
+      $body .= '--'.$boundary.$eol;
+      $body .= 'Content-Type: text/plain; charset=ISO-8859-1'.$eol;
+      $body .= 'Content-Transfer-Encoding: 8bit'.$eol;
+      $body .= $eol.stripslashes($message).$eol;
+      if (!empty($_FILES))
+      {
+         foreach ($_FILES as $key => $value)
+         {
+             if ($_FILES[$key]['error'] == 0)
+             {
+                $body .= '--'.$boundary.$eol;
+                $body .= 'Content-Type: '.$_FILES[$key]['type'].'; name='.$_FILES[$key]['name'].$eol;
+                $body .= 'Content-Transfer-Encoding: base64'.$eol;
+                $body .= 'Content-Disposition: attachment; filename='.$_FILES[$key]['name'].$eol;
+                $body .= $eol.chunk_split(base64_encode(file_get_contents($_FILES[$key]['tmp_name']))).$eol;
+             }
+         }
+      }
+      $body .= '--'.$boundary.'--'.$eol;
+      if ($mailto != '')
+      {
+         mail($mailto, $subject, $body, $header);
+      }
+      header('Location: '.$success_url);
+   }
+   catch (Exception $e)
+   {
+      $errorcode = file_get_contents($error_url);
+      $replace = "##error##";
+      $errorcode = str_replace($replace, $e->getMessage(), $errorcode);
+      echo $errorcode;
+   }
+   exit;
+}
+?>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>United Animations</title>
+<meta name="description" content="This website is for sharing my Animations i created">
+<meta name="keywords" content="Animations">
+<meta name="author" content="United Animations">
+<meta name="generator" content="WYSIWYG Web Builder 17 Trial Version - https://www.wysiwygwebbuilder.com">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="UNITED (3).png" rel="icon" sizes="16x16" type="image/png">
+<link href="UNITED (3).png" rel="icon" type="image/png">
+<link href="UNITED (3).png" rel="apple-touch-icon" sizes="500x500">
+<link href="css/owl.carousel.min.css" rel="stylesheet">
+<link href="css/font-awesome.min.css" rel="stylesheet">
+<link href="css/darkmode.css" rel="stylesheet">
+<link href="css/UnitedAnimations.css" rel="stylesheet">
+<script src="jquery-1.12.4.min.js"></script>
+<script src="jquery.ui.effect.min.js"></script>
+<script src="owl.carousel.min.js"></script>
+<script src="popper.min.js"></script>
+<script src="util.min.js"></script>
+<script src="collapse.min.js"></script>
+<script src="dropdown.min.js"></script>
+<script src="skrollr.min.js"></script>
+<script src="tab.min.js"></script>
+<script>   
+   $(document).ready(function()
+   {
+      $("a[href*='#welcome']").click(function(event)
+      {
+         event.preventDefault();
+         $('html, body').stop().animate({ scrollTop: $('#wb_welcome').offset().top-78 }, 600, 'easeOutQuart');
+      });
+      $("a[href*='#news']").click(function(event)
+      {
+         event.preventDefault();
+         $('html, body').stop().animate({ scrollTop: $('#wb_news').offset().top-78 }, 600, 'easeOutQuart');
+      });
+      $("#newsContainer").owlCarousel({autoplayTimeout:5000, margin: 0, autoplay: true, nav: false, loop: true, dots: true, items: 1, slideBy: 1});
+      $("a[href*='#about']").click(function(event)
+      {
+         event.preventDefault();
+         $('html, body').stop().animate({ scrollTop: $('#wb_about').offset().top-78 }, 600, 'easeOutQuart');
+      });
+      $("a[href*='#team']").click(function(event)
+      {
+         event.preventDefault();
+         $('html, body').stop().animate({ scrollTop: $('#wb_team').offset().top-78 }, 600, 'easeOutQuart');
+      });
+      $("#teamContainer").owlCarousel({autoplayTimeout:5000, margin: 12, autoplay: true, nav: false, loop: true, dots: true, items: 1, slideBy: 1});
+      $("a[href*='#contact']").click(function(event)
+      {
+         event.preventDefault();
+         $('html, body').stop().animate({ scrollTop: $('#wb_contact').offset().top-78 }, 600, 'easeOutQuart');
+      });
+      $('#navigationMenu .dropdown-toggle').dropdown({popperConfig:{placement:'bottom-start',modifiers:{computeStyle:{gpuAcceleration:false}}}});
+      $(document).on('click','.navigationMenu-navbar-collapse.show',function(e)
+      {
+         if ($(e.target).is('a') && ($(e.target).attr('class') != 'dropdown-toggle')) 
+         {
+            $(this).collapse('hide');
+         }
+      });
+      $("a[href*='#contactForm']").click(function(event)
+      {
+         event.preventDefault();
+         $('html, body').stop().animate({ scrollTop: $('#wb_contactForm').offset().top }, 600, 'easeInCubic');
+      });
+      function skrollrInit()
+      {
+         skrollr.init({forceHeight: false, mobileCheck: function() { return false; }, smoothScrolling: false});
+      }
+      skrollrInit();
+      $("#aboutTabs a.nav-link").click(function(e)
+      {
+         e.preventDefault();
+         $(this).tab('show');
+      });
+   });
+</script>
+<meta name="a.validate.02" content="NdOCnfF58krpOQbzACBrcDf2cmM32cgMViA0"/><meta name="a.validate.02" content="NdOCnfF58krpOQbzACBrcDf2cmM32cgMViA0"/>
+</head>
+<body>
+   <div id="container">
+      <a href="https://www.wysiwygwebbuilder.com" target="_blank"><img src="images/builtwithwwb17.png" alt="WYSIWYG Web Builder" style="position:absolute;left:441px;top:2743px;margin:0;border-width:0;z-index:250" width="16" height="16"></a>
+   </div>
+   <div id="wb_navigation">
+      <div id="navigation">
+         <div class="row">
+            <div class="col-1">
+               <div id="wb_navigationHeading" style="display:inline-block;width:100%;z-index:0;">
+                  <h4 id="navigationHeading"><a href="./UnitedAnimations.html">UNITED ANIMATIONS STUDIOS</a></h4>
+               </div>
+            </div>
+            <div class="col-2">
+               <div id="wb_navigationMenu" style="display:inline-block;width:100%;z-index:1;">
+                  <div id="navigationMenu" class="navigationMenu" style="width:100%;height:auto !important;">
+                     <div class="container">
+                        <div class="navbar-header">
+                           <button title="Hamburger Menu" type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navigationMenu-navbar-collapse">
+                              <span class="icon-bar"></span>
+                              <span class="icon-bar"></span>
+                              <span class="icon-bar"></span>
+                           </button>
+                        </div>
+                        <div class="navigationMenu-navbar-collapse collapse">
+                           <ul class="nav navbar-nav" itemscope="itemscope" itemtype="https://schema.org/SiteNavigationElement">
+                              <li itemprop="name" class="nav-item">
+                                 <a href="./UnitedAnimations.html" class="nav-link" itemprop="url"><i class="fa fa-align-justify"></i>HOME</a>
+                              </li>
+                              <li itemprop="name" class="nav-item">
+                                 <a href="#news" class="nav-link" itemprop="url"><i class="fa fa-battery-quarter"></i>NEWS</a>
+                              </li>
+                              <li itemprop="name" class="nav-item">
+                                 <a href="#about" class="nav-link" itemprop="url"><i class="fa fa-bullhorn"></i>ABOUT</a>
+                              </li>
+                              <li itemprop="name" class="nav-item">
+                                 <a href="./Donate.html" class="nav-link" itemprop="url"><i class="fa fa-diamond"></i>DONATE</a>
+                              </li>
+                              <li itemprop="name" class="nav-item">
+                                 <a href="./Contact-us.php" class="nav-link" itemprop="url"><i class="fa fa-adjust"></i>CONTACT US</a>
+                              </li>
+                              <li itemprop="name" class="nav-item">
+                                 <a href="./Login-in.html" class="nav-link" itemprop="url"><i class="fa fa-compress"></i>LOGIN</a>
+                              </li>
+                              <li itemprop="name" class="nav-item">
+                                 <a href="https://discord.gg/BjKraYBwrR" class="nav-link" itemprop="url"><i class="fa fa-flag-checkered"></i>COMMUNITY</a>
+                              </li>
+                           </ul>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div id="wb_welcome">
+      <div id="welcome-overlay"></div>
+      <div id="welcome">
+         <div class="row">
+            <div class="col-1">
+               <div id="wb_welcomeHeading" style="display:inline-block;width:100%;z-index:2;">
+                  <h1 id="welcomeHeading">WELCOME TO UNITED ANIMATIONS</h1>
+               </div>
+               <a id="welcomeButton" href="https://www.youtube.com/channel/UCVd27QSUaLOB3V4RMrjPQxw" style="display:inline-block;width:141px;height:37px;z-index:3;">CLICK ME</a>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div id="wb_news">
+      <div id="news">
+         <div class="row">
+            <div class="col-1">
+               <div id="wb_newsHeading" style="display:inline-block;width:100%;z-index:4;">
+                  <h2 id="newsHeading">Latest News</h2>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div id="wb_newsContainer">
+      <div id="newsContainer" class="owl-carousel owl-theme">
+         <div id="wb_newsCard3" style="display:flex;text-align:center;z-index:5;" class="card">
+            <div id="newsCard3-card-body">
+               <div id="newsCard3-card-item0">Get to know us </div>
+               <div id="newsCard3-card-item1">Feburary 2022</div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div id="wb_about">
+      <div id="about">
+         <div class="row">
+            <div class="col-1">
+               <div id="wb_aboutImage" style="display:inline-block;width:100%;height:auto;z-index:6;">
+                  <img src="images/UNITED (3).png" id="aboutImage" alt="" width="293" height="293">
+               </div>
+            </div>
+            <div class="col-2">
+               <div id="wb_aboutText1">
+                  <p style="font-size:20px;"><span style="font-size:32px;line-height:36px;">Our Studio</span></p>
+                  <p style="font-size:13px;">&nbsp;</p>
+                  <p style="font-size:13px;line-height:20.8px;">Our Studio is focused on the piority of sharing our own animations with our community and fans</p>
+                  <p style="font-size:13px;line-height:20.8px;">And ensuring that our audience shares their views with us</p>
+               </div>
+               <a id="aboutButton" href="" style="display:inline-block;width:116px;height:36px;z-index:8;">Read More</a>
+            </div>
+            <div class="col-3">
+               <div id="aboutTabs" style="display:inline-block;width:100%;z-index:11;">
+                  <ul class="nav nav-tabs" role="tablist">
+                     <li class="nav-item"><a href="#abouttabs-page-1" class="nav-link active" role="tab" data-toggle="tab" aria-controls="abouttabs-page-1" aria-selected="true"><span>Vision</span></a></li>
+                     <li class="nav-item"><a href="#abouttabs-page-2" class="nav-link" role="tab" data-toggle="tab" aria-controls="abouttabs-page-2" aria-selected="false"><span>Mission</span></a></li>
+                  </ul>
+                  <div role="tabpanel" class="tab-pane active" id="abouttabs-page-1">
+                     <div id="wb_aboutTabsText1">
+                        <p>Our the ultimate end goal is building an official brand of animations that showcases who we are and what we do and are about</p>
+                     </div>
+                  </div>
+                  <div role="tabpanel" class="tab-pane" id="abouttabs-page-2">
+                     <div id="wb_aboutTabsText2">
+                        <p>We our work we will be able to borden the scope and expand our work internationally</p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div id="wb_team">
+      <div id="team">
+         <div class="row">
+            <div class="col-1">
+               <div id="wb_teamHeading1" style="display:inline-block;width:100%;z-index:12;">
+                  <h2 id="teamHeading1">Meet the Wonderful Animator</h2>
+               </div>
+               <div id="wb_teamHeading2" style="display:inline-block;width:100%;z-index:13;">
+                  <h3 id="teamHeading2">He is brilliant...</h3>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div id="wb_teamContainer">
+      <div id="teamContainer" class="owl-carousel owl-theme">
+         <div id="wb_teamCard6" style="display:flex;z-index:14;" class="card">
+            <div id="teamCard6-card-body">
+               <img id="teamCard6-card-item0" src="images/final edit crop 2.jpg" width="907" height="1074" alt="" title="">
+               <div id="teamCard6-card-item1">Unknown</div>
+               <div id="teamCard6-card-item2">Animator and Web Designer</div>
+               <div id="teamCard6-card-item3"><i class="fa fa-star"></i></div>
+               <div id="teamCard6-card-item4"><i class="fa fa-star"></i></div>
+               <div id="teamCard6-card-item5"><i class="fa fa-star"></i></div>
+               <div id="teamCard6-card-item6"><i class="fa fa-star"></i></div>
+               <div id="teamCard6-card-item7"><i class="fa fa-star"></i></div>
+               <div id="teamCard6-card-item8">Hi, there i am Unknown the founder and CEO of United Animations Studio<br>I hope you enjoy the website</div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div id="wb_contact">
+      <div id="contact">
+         <div class="row">
+            <div class="col-1">
+               <div id="wb_contactHeadingText">
+                  <p>CONTACT <span style="font-weight:bold;color:#28A7E9;">INFORMATION</span></p>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div id="wb_contactForm">
+      <form name="Contact_us" method="post" action="<?php echo basename(__FILE__); ?>" enctype="multipart/form-data" id="contactForm">
+         <input type="hidden" name="formid" value="contactform">
+         <div class="row">
+            <div class="col-1">
+               <div id="wb_contactText">
+                  <p>We are always open to views and opinion</p>
+                  <p style="color:#28A7E9;"><span style="font-weight:bold;">Email:</span><span style="color:#FFFFFF;">&nbsp; UnitedVidsic@gmail.com</span></p>
+               </div>
+            </div>
+            <div class="col-2">
+               <a id="contactButton" href="./Contact-us.php" style="display:block;width:100%;;height:39px;z-index:17;">Submit</a>
+            </div>
+         </div>
+      </form>
+   </div>
+   <div id="StickyLayer" style="position:fixed;text-align:left;left:auto;right:25px;top:auto;bottom:25px;width:50px;height:50px;z-index:23;z-index:99999;" data-250-start="opacity:1;" data-start="opacity:0;">
+      <div id="wb_up-arrow" style="position:absolute;left:9px;top:8px;width:24px;height:24px;text-align:center;z-index:18;">
+         <a href="#welcome"><div id="up-arrow"><i class="fa fa-angle-up"></i></div></a></div>
+   </div>
+   <div id="wb_footer" style="z-index:10000 !important;">
+      <div id="footer">
+         <div class="row">
+            <div class="col-1">
+               <div id="wb_footerText">
+                  <p><span style="background-color:#FFFFFF;">C</span><span style="background-color:#FFFFFF;">opyright </span><span style="background-color:#FFFFFF;">©</span><span style="background-color:#FFFFFF;"> 20</span><span style="background-color:#FFFFFF;">22 </span><span style="background-color:#FFFFFF;">UnitedAnimations</span></p>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</body>
+</html>
