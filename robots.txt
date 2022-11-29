@@ -1,3 +1,0 @@
-User-agent: *
-Allow: /
-Sitemap: http://www.UnitedAnimations.com/sitemap.xml
