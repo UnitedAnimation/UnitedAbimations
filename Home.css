@@ -168,40 +168,6 @@
   background-position: 50% 50%;
 }
 
-.u-section-3 .u-layout-cell-2 {
-  min-height: 527px;
-  background-image: none;
-}
-
-.u-section-3 .u-container-layout-2 {
-  padding-left: 20px;
-  padding-right: 20px;
-}
-
-.u-section-3 .u-text-1 {
-  position: relative;
-  font-size: 1.5rem;
-  margin: 38px 0 0;
-}
-
-.u-section-3 .u-text-2 {
-  position: relative;
-  font-size: 3rem;
-  font-weight: 700;
-  margin: 20px 0 0;
-}
-
-.u-section-3 .u-line-1 {
-  width: 100px;
-  height: 3px;
-  margin: 30px 240px 0 0;
-}
-
-.u-section-3 .u-text-3 {
-  font-style: italic;
-  margin: 30px 0 38px;
-}
-
 @media (max-width: 1199px) {
   .u-section-3 .u-sheet-1 {
     min-height: 400px;
@@ -210,64 +176,6 @@
   .u-section-3 .u-layout-wrap-1 {
     margin-right: initial;
     margin-left: initial;
-  }
-
-  .u-section-3 .u-container-layout-2 {
-    padding-left: 16px;
-    padding-right: 16px;
-  }
-
-  .u-section-3 .u-line-1 {
-    width: 82px;
-    margin-right: 198px;
-  }
-}
-
-@media (max-width: 991px) {
-  .u-section-3 .u-container-layout-2 {
-    padding-left: 13px;
-    padding-right: 13px;
-  }
-
-  .u-section-3 .u-text-1 {
-    font-size: 1.25rem;
-  }
-
-  .u-section-3 .u-text-2 {
-    font-size: 2.25rem;
-  }
-
-  .u-section-3 .u-line-1 {
-    width: 63px;
-    margin-right: 152px;
-  }
-}
-
-@media (max-width: 767px) {
-  .u-section-3 .u-container-layout-2 {
-    padding-left: 9px;
-    padding-right: 9px;
-  }
-
-  .u-section-3 .u-text-2 {
-    font-size: 3rem;
-  }
-
-  .u-section-3 .u-line-1 {
-    width: 59px;
-    margin-right: 114px;
-  }
-}
-
-@media (max-width: 575px) {
-  .u-section-3 .u-container-layout-2 {
-    padding-left: 6px;
-    padding-right: 6px;
-  }
-
-  .u-section-3 .u-line-1 {
-    width: 50px;
-    margin-right: 72px;
   }
 } .u-section-4 {
   background-image: url("images/d7602255848ab028e47a16d5ebcc8d18.jpeg");
@@ -300,6 +208,11 @@
 .u-section-4 .u-text-2 {
   position: relative;
   margin: 20px 0 30px;
+}
+
+.u-section-4 .u-btn-1 {
+  background-image: none;
+  padding: 0;
 }
 
 .u-section-4 .u-layout-cell-2 {
